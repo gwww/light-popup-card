@@ -101,7 +101,7 @@ class LightPopupCard extends LitElement {
                     <ha-icon style="${onStates.includes(stateObj.state) ? 'color:'+color+';' : ''}" icon="${icon}" />
                 </div>
                 ${ stateObj.attributes.supported_features > supportedFeaturesTreshold ? html`
-                    <h4 id="brightnessValue" class="${offStates.includes(stateObj.state) ? '' : 'brightness'}" data-value="${this.currentBrightness}%">${offStates.includes(stateObj.state) ? computeStateDisplay(this.hass.localize, stateObj, this.hass.language) : ''}</h4>
+                    <h4 id="brightnessValue">${offStates.includes(stateObj.state) ? "Off" : stateObj.attributes.brightness + '%'}</h4>
                     <div class="range-holder" style="--slider-height: ${brightnessHeight};--slider-width: ${brightnessWidth};">
                         <input type="range" style="--slider-width: ${brightnessWidth};--slider-height: ${brightnessHeight}; --slider-border-radius: ${borderRadius};${sliderColoredByLight ? '--slider-color:'+color+';':'--slider-color:'+sliderColor+';'}--slider-thumb-color:${sliderThumbColor};--slider-track-color:${sliderTrackColor};" .value="${offStates.includes(stateObj.state) ? 0 : Math.round(stateObj.attributes.brightness/2.55)}" @input=${e => this._previewBrightness(e.target.value)} @change=${e => this._setBrightness(stateObj, e.target.value)}>
                     </div>
@@ -225,9 +225,8 @@ class LightPopupCard extends LitElement {
   }
 
   _previewBrightness(value) {
-    this.currentBrightness = value;
     const el = this.shadowRoot.getElementById("brightnessValue");
-    if(el) {el.dataset.value = value+"%";}
+    if(el) {el.innerText = (value == 0) ? "Off" : value + "%";}
   }
 
   _setBrightness(state, value) {
@@ -404,10 +403,6 @@ class LightPopupCard extends LitElement {
             font-size:20px;
             margin-top:0;
             text-transform: capitalize;
-        }
-        h4.brightness:after {
-            content: attr(data-value);
-            padding-left: 1px;
         }
         
         .range-holder {
